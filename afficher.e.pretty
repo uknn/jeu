@@ -1,0 +1,69 @@
+note
+	description: "Remise2 application root class"
+	date: "$Date$"
+	revision: "$Revision$"
+
+class
+	AFFICHER
+
+create
+	make
+
+feature
+
+	npc: SPRITE
+
+	background: BACKGROUND
+
+	music: SON
+
+	score: SCORE
+
+feature
+
+	make
+		local
+			l_inutile: INTEGER_32
+			l_screen: POINTER
+			l_gamestate: BOOLEAN
+			l_titre: STRING
+			l_titre_c: C_STRING
+			l_event: POINTER
+			l_background: BACKGROUND
+			l_megaman: MEGAMAN
+		do
+			l_gamestate := true
+			l_titre := "Megaman Rectum Edition"
+			create l_titre_c.make (l_titre)
+			l_inutile := {RAPPER}.SDL_Init ({RAPPER}.SDL_INIT_VIDEO)
+			l_screen := {RAPPER}.SDL_SetVideoMode (840, 640, 32, {RAPPER}.SDL_SWSURFACE)
+			{RAPPER}.SDL_WM_SetCaption (l_titre_c.item, create {POINTER})
+			l_event := l_event.memory_calloc ({RAPPER}.sizeof_SDL_Event, 1)
+			create l_background.make ("background.bmp", l_screen)
+			create l_megaman.fait
+			create objet_score.andhescores
+			from
+				l_gamestate := true
+			until
+				l_gamestate = false
+			loop
+				if {RAPPER}.SDL_PollEvent (l_event) = 1 then
+					if {RAPPER}.get_type_from_SDL_Event (l_event) = {RAPPER}.SDL_Quit_const then
+						l_gamestate := false
+					end
+				end
+				l_megaman.sprite_affiche_mega (l_screen)
+				l_inutile := {RAPPER}.SDL_Flip (l_screen)
+				{RAPPER}.SDL_Delay (1)
+			end
+
+				--faut faire comme on a faite ak sizeof rectum ak un malloc pour avoir notre pointeur "EVENT" pis le rapper SDL_Event ak type pis sdl_quit
+
+			l_event.memory_free
+		end
+
+	objet_score: SCORE
+
+	yo: BD
+
+end
